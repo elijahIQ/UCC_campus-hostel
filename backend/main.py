@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -7,7 +6,7 @@ import sqlite3, hashlib, shutil, os
 
 app = FastAPI()
 
-# === 1. ALLOW FRONTEND (NETLIFY) ACCESS ===
+# Allow frontend access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://ucc-campus-hostel.netlify.app"],
@@ -16,37 +15,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# === 2. FOLDER SETUP ===
 os.makedirs("images", exist_ok=True)
 app.mount("/images", StaticFiles(directory="images"), name="images")
 
 DB_PATH = "database.db"
 
-# === 3. DATABASE SETUP ===
+# Initialize database
 conn = sqlite3.connect(DB_PATH)
 c = conn.cursor()
 
-# Hostels table
-c.execute("""
-CREATE TABLE IF NOT EXISTS hostels (
+c.execute("""CREATE TABLE IF NOT EXISTS hostels (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     contact TEXT,
     image1 TEXT,
     image2 TEXT
-)
-""")
+)""")
 
-# Users table
-c.execute("""
-CREATE TABLE IF NOT EXISTS users (
+c.execute("""CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE,
     password TEXT
-)
-""")
+)""")
 
-# Create default admin user
+# Create default admin
 hashed_pw = hashlib.sha256("12345".encode()).hexdigest()
 try:
     c.execute("INSERT INTO users (username, password) VALUES (?, ?)", ("admin", hashed_pw))
@@ -56,9 +48,6 @@ except sqlite3.IntegrityError:
 conn.commit()
 conn.close()
 
-# === 4. ROUTES ===
-
-# Add hostel
 @app.post("/hostels")
 async def add_hostel(
     name: str = Form(...),
@@ -69,7 +58,6 @@ async def add_hostel(
     img1_path = f"images/{image1.filename}" if image1 else None
     img2_path = f"images/{image2.filename}" if image2 else None
 
-    # Save images
     if image1:
         with open(img1_path, "wb") as f:
             shutil.copyfileobj(image1.file, f)
@@ -82,11 +70,8 @@ async def add_hostel(
                  (name, contact, img1_path, img2_path))
     conn.commit()
     conn.close()
+    return {"message": "Hostel added successfully"}
 
-    return {"message": "Hostel added successfully!"}
-
-
-# Get all hostels
 @app.get("/hostels")
 def get_hostels():
     conn = sqlite3.connect(DB_PATH)
@@ -94,13 +79,8 @@ def get_hostels():
     c.execute("SELECT name, contact, image1, image2 FROM hostels")
     rows = c.fetchall()
     conn.close()
-    return [
-        {"name": r[0], "contact": r[1], "image1": r[2], "image2": r[3]}
-        for r in rows
-    ]
+    return [{"name": r[0], "contact": r[1], "image1": r[2], "image2": r[3]} for r in rows]
 
-
-# Login route
 @app.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
     conn = sqlite3.connect(DB_PATH)
@@ -117,5 +97,13 @@ async def login(username: str = Form(...), password: str = Form(...)):
         return {"message": "Login successful"}
     else:
         return JSONResponse({"message": "Incorrect password"}, status_code=401)
+
+
+
+
+
+
+
+
 
 
