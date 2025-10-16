@@ -8,10 +8,10 @@ import sqlite3
 import hashlib
 import shutil
 import os
-
+from fastapi import FastAPI, UploadFile, Form
 from fastapi import FastAPI, Form, UploadFile, File
 from fastapi.staticfiles import StaticFiles
-import os
+
 
 
 from fastapi import FastAPI, Form
@@ -32,6 +32,53 @@ app.add_middleware(
 # Serve image files
 os.makedirs("backend/images", exist_ok=True)
 app.mount("/images", StaticFiles(directory="backend/images"), name="images")
+
+
+# Create uploads directory
+os.makedirs("uploads", exist_ok=True)
+
+# Create hostels table if not exists
+conn = sqlite3.connect("backend/database.db")
+c = conn.cursor()
+c.execute("""
+CREATE TABLE IF NOT EXISTS hostels (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    owner_contact TEXT,
+    image1 TEXT,
+    image2 TEXT
+)
+""")
+conn.commit()
+conn.close()
+
+
+@app.post("/hostels")
+async def add_hostel(
+    name: str = Form(...),
+    contact: str = Form(...),
+    image1: UploadFile = None,
+    image2: UploadFile = None
+):
+    image1_path = f"uploads/{image1.filename}"
+    image2_path = f"uploads/{image2.filename}"
+
+    # Save uploaded images
+    with open(image1_path, "wb") as buffer:
+        shutil.copyfileobj(image1.file, buffer)
+    with open(image2_path, "wb") as buffer:
+        shutil.copyfileobj(image2.file, buffer)
+
+    # Save data to database
+    conn = sqlite3.connect("backend/database.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO hostels (name, owner_contact, image1, image2) VALUES (?, ?, ?, ?)",
+              (name, contact, image1_path, image2_path))
+    conn.commit()
+    conn.close()
+
+    return {"message": "Hostel added successfully!"}
+
 
 DB_PATH = "database.db"
 
@@ -142,5 +189,6 @@ def get_hostels():
     hostels = c.fetchall()
     conn.close()
     return [{"name": h[0], "image1": h[1], "image2": h[2], "owner_contact": h[3]} for h in hostels]
+
 
 
