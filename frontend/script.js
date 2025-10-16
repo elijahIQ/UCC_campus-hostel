@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/hostels";
+
 const API_URL = "https://ucc-campus-hostel-backend.onrender.com/hostels";
 
 async function fetchHostels() {
@@ -26,4 +26,5 @@ async function fetchHostels() {
 }
 
 fetchHostels();
+
 
