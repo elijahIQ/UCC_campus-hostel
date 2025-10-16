@@ -1,4 +1,5 @@
 const API_URL = "http://127.0.0.1:8000/hostels";
+const API_URL = "https://ucc-campus-hostel-backend.onrender.com/hostels";
 
 async function fetchHostels() {
   const res = await fetch(API_URL);
@@ -12,8 +13,11 @@ async function fetchHostels() {
     card.innerHTML = `
       <h2>${hostel.name}</h2>
       <div class="images">
-        <img src="http://127.0.0.1:8000/${hostel.image1}" alt="${hostel.name} image 1">
-        <img src="http://127.0.0.1:8000/${hostel.image2}" alt="${hostel.name} image 2">
+        
+        <img src="https://ucc-campus-hostel-backend.onrender.com/${hostel.image1}" alt="${hostel.name} image 1">
+       <img src="https://ucc-campus-hostel-backend.onrender.com/${hostel.image2}" alt="${hostel.name} image 2">
+
+        
       </div>
       <p><strong>Owner Contact:</strong> ${hostel.contact}</p>
     `;
@@ -22,3 +26,4 @@ async function fetchHostels() {
 }
 
 fetchHostels();
+
