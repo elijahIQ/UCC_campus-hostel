@@ -9,6 +9,10 @@ import hashlib
 import shutil
 import os
 
+from fastapi import FastAPI, Form, UploadFile, File
+from fastapi.staticfiles import StaticFiles
+import os
+
 app = FastAPI()
 security = HTTPBasic()
 
@@ -21,8 +25,8 @@ app.add_middleware(
 )
 
 # Serve image files
-app.mount("/images", StaticFiles(directory="images"), name="images")
-os.makedirs("images", exist_ok=True)
+os.makedirs("backend/images", exist_ok=True)
+app.mount("/images", StaticFiles(directory="backend/images"), name="images")
 
 DB_PATH = "database.db"
 
@@ -123,3 +127,4 @@ async def login(username: str = Form(...), password: str = Form(...)):
         return {"message": "Login successful"}
     else:
         return JSONResponse({"message": "Incorrect password"}, status_code=401)
+
