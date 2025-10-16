@@ -135,3 +135,12 @@ async def login(username: str = Form(...), password: str = Form(...)):
         return JSONResponse({"message": "Incorrect password"}, status_code=401)
 
 
+@app.get("/hostels")
+def get_hostels():
+    conn = sqlite3.connect("backend/database.db")
+    c = conn.cursor()
+    c.execute("SELECT name, image1, image2, owner_contact FROM hostels")
+    hostels = c.fetchall()
+    conn.close()
+    return [{"name": h[0], "image1": h[1], "image2": h[2], "owner_contact": h[3]} for h in hostels]
+
