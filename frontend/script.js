@@ -1,8 +1,6 @@
-
-// Backend API URL
 const API_URL = "https://ucc-campus-hostel-backend.onrender.com/hostels";
 
-// Fetch all hostels from backend
+// Fetch hostels from backend
 async function fetchHostels() {
   try {
     const res = await fetch(API_URL);
@@ -12,7 +10,6 @@ async function fetchHostels() {
     const list = document.getElementById("hostelList");
     list.innerHTML = "";
 
-    // Loop through and display hostels
     data.forEach(hostel => {
       const card = document.createElement("div");
       card.className = "hostel-card";
@@ -26,14 +23,13 @@ async function fetchHostels() {
       `;
       list.appendChild(card);
     });
-  } catch (error) {
-    console.error("Error loading hostels:", error);
-    const list = document.getElementById("hostelList");
-    list.innerHTML = `<p style="color:red; text-align:center;">Unable to load hostels. Please try again later.</p>`;
+  } catch (err) {
+    console.error(err);
+    document.getElementById("hostelList").innerHTML = "<p style='color:red;text-align:center;'>Failed to load hostels.</p>";
   }
 }
 
-// Search/filter function
+// Search function
 function filterHostels() {
   const query = document.getElementById("searchBox").value.toLowerCase();
   const hostels = document.getElementsByClassName("hostel-card");
@@ -44,7 +40,6 @@ function filterHostels() {
   }
 }
 
-// Run when page loads
 window.onload = fetchHostels;
 
 
