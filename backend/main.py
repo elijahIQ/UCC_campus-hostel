@@ -13,16 +13,22 @@ from fastapi import FastAPI, Form, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 import os
 
+
+from fastapi import FastAPI, Form
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 security = HTTPBasic()
 
-# Enable frontend access
+# ✅ Allow frontend (Netlify) to talk to backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://ucc-campus-hostel.netlify.app"],  # your Netlify URL
+    allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
+
 
 # Serve image files
 os.makedirs("backend/images", exist_ok=True)
@@ -127,4 +133,5 @@ async def login(username: str = Form(...), password: str = Form(...)):
         return {"message": "Login successful"}
     else:
         return JSONResponse({"message": "Incorrect password"}, status_code=401)
+
 
