@@ -6,6 +6,34 @@
   <title>UCC Campus Hostel</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js"></script>
+<script>
+async function loadHostels() {
+  try {
+    const res = await fetch("https://ucc-campus-hostel.onrender.com/hostels");
+    const hostels = await res.json();
+    const list = document.getElementById("hostelList");
+    list.innerHTML = "";
+
+    hostels.forEach(h => {
+      const card = document.createElement("div");
+      card.className = "hostel-card";
+      card.innerHTML = `
+        <h2>${h.name}</h2>
+        <div class="images">
+          <img src="${h.image1}" alt="${h.name} image 1">
+          <img src="${h.image2}" alt="${h.name} image 2">
+        </div>
+        <p><strong>Owner Contact:</strong> ${h.owner_contact}</p>
+      `;
+      list.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Error loading hostels:", err);
+  }
+}
+
+window.onload = loadHostels;
+</script>
 
 
 </head>
@@ -68,3 +96,4 @@
   </script>
 </body>
 </html>
+
