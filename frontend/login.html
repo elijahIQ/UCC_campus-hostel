@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,16 +13,16 @@
   </header>
 
   <section class="form-section">
-<form id="loginForm" action="https://ucc-campus-hostel.onrender.com/login" method="post">
-  <label>Username:</label>
-  <input type="text" name="username" placeholder="Enter username" required>
-  
-  <label>Password:</label>
-  <input type="password" name="password" placeholder="Enter password" required>
-  
-  <button type="submit">Login</button>
-</form>
- <p id="loginMsg"></p>
+    <form id="loginForm">
+      <label>Username:</label>
+      <input type="text" name="username" placeholder="Enter username" required>
+      
+      <label>Password:</label>
+      <input type="password" name="password" placeholder="Enter password" required>
+      
+      <button type="submit">Login</button>
+    </form>
+    <p id="loginMsg"></p>
   </section>
 
   <script>
@@ -32,23 +33,28 @@
       e.preventDefault();
       const formData = new FormData(form);
 
-      const res = await fetch("http://127.0.0.1:8000/login", {
-        method: "POST",
-        body: formData
-      });
+      try {
+        const res = await fetch("https://ucc-campus-hostel-backend.onrender.com/login", {
+          method: "POST",
+          body: formData
+        });
 
-      if (res.ok) {
-        msg.textContent = "✅ Login successful!";
-        msg.style.color = "green";
-        localStorage.setItem("isLoggedIn", "true");
-        window.location.href = "add_hostel.html";
-      } else {
         const data = await res.json();
-        msg.textContent = "❌ " + data.message;
-        msg.style.color = "red";
+
+        if (res.ok) {
+          msg.textContent = "✅ " + data.message;
+          msg.style.color = "green";
+          localStorage.setItem("isLoggedIn", "true");
+          window.location.href = "add_hostel.html";
+        } else {
+          msg.textContent = "❌ " + data.message;
+          msg.style.color = "red";
+        }
+      } catch (error) {
+        msg.textContent = "⚠️ Connection error.";
+        msg.style.color = "orange";
       }
     });
   </script>
 </body>
 </html>
-
