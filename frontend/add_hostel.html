@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,25 +8,16 @@
   <title>Add Hostel | UCC Campus Hostel</title>
   <link rel="stylesheet" href="style.css">
   <script>
-  if (localStorage.getItem("isLoggedIn") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
-<button id="logoutBtn" style="margin-top: 10px; background:#c0392b;">Logout</button>
-
-<script>
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("isLoggedIn");
-    window.location.href = "login.html";
-  });
-</script>
-
-
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 <body>
   <header>
     <h1>Add New Hostel</h1>
     <a href="index.html" class="back-link">← Back to Home</a>
+    <button id="logoutBtn" style="margin-top:10px;background:#c0392b;color:white;">Logout</button>
   </header>
 
   <section class="form-section">
@@ -48,6 +41,11 @@
   </section>
 
   <script>
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("isLoggedIn");
+      window.location.href = "login.html";
+    });
+
     const form = document.getElementById("hostelForm");
     const msg = document.getElementById("message");
 
@@ -56,7 +54,7 @@
       const formData = new FormData(form);
 
       try {
-      const res = await fetch("https://ucc-campus-hostel.onrender.com", {
+        const res = await fetch("https://ucc-campus-hostel-backend.onrender.com/hostels", {
           method: "POST",
           body: formData
         });
