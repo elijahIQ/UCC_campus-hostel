@@ -25,6 +25,9 @@ async function fetchHostels() {
   });
 }
 
+fetch("https://ucc-campus-hostel-backend.onrender.com/login", {...})
+
 fetchHostels();
+
 
 
