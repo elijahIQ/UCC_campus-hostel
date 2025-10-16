@@ -29,7 +29,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Serve image files
 os.makedirs("backend/images", exist_ok=True)
 app.mount("/images", StaticFiles(directory="backend/images"), name="images")
@@ -143,4 +142,5 @@ def get_hostels():
     hostels = c.fetchall()
     conn.close()
     return [{"name": h[0], "image1": h[1], "image2": h[2], "owner_contact": h[3]} for h in hostels]
+
 
